@@ -1,7 +1,5 @@
 package framework.utilities;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -338,36 +336,16 @@ public class AJAMDecoder {
 		
 	}
 
-
 	public TimeFrameNotes getNotes() {
 		return notes;
 	}
-
 	
 	public TimeFrameChords getChords() {
 		return chords;
 	}
-
 	
 	public Header getHeader() {
 		return header;
-	}
-	
-	public static void main(String args){
-		
-		AJAMDecoder decoder = new AJAMDecoder();
-		try {
-			decoder.decodeAJAM(new FileInputStream("res/how_high_the_moon.ajam"));
-			TimeFrameChords chords = decoder.getChords();
-			System.out.println(chords);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (AJAMFileErrorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 	
 }
