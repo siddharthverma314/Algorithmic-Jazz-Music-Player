@@ -247,6 +247,8 @@ public class AJAMDecoder {
 			
 		}
 		
+		s.close();
+		
 	}
 	
 	private int getLength(char c){
