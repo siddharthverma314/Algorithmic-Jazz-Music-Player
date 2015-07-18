@@ -3,8 +3,8 @@ package player;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import framework.music.TimeFramePlayer;
 import framework.utilities.AJAMDecoder;
-import framework.utilities.TimeframePlayer;
 import framework.utilities.AJAMDecoder.AJAMFileErrorException;
 
 public class Display {
@@ -14,8 +14,9 @@ public class Display {
 		AJAMDecoder decode = new AJAMDecoder();
 		try {
 			decode.decodeAJAM(new FileInputStream("res/how_high_the_moon.ajam"));
-			TimeframePlayer player = new TimeframePlayer(decode.getBPM());
-			player.addTimeFrame(decode.getMelodyNoteOn(), decode.getMelodyNoteOff());
+			TimeFramePlayer player = new TimeFramePlayer(decode.getHeader().getBeatsPerMinute());
+			player.addTimeFrameNote(decode.getNotes());
+			player.addTimeFrameChord(decode.getChords());
 			player.playTimeFrame();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

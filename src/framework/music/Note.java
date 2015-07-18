@@ -2,7 +2,7 @@ package framework.music;
 
 public class Note {
 	
-	private int midi, velocity, duration;
+	private int midi, velocity;
 	
 	public int getMidi() {
 		return midi;
@@ -42,6 +42,17 @@ public class Note {
 		return StandardNotes.noteEquals(this, otherNote);
 	}
 	
+	public Note getNote(){
+		return this;
+	}
+
+	public void setNote(Note note){
+		
+		this.midi = note.getMidi();
+		this.velocity = note.getVelocity();
+		
+	}
+	
 	public void shiftInterval(int[] scale, int interval){
 		
 		if(interval > 15 || interval < 0)
@@ -61,16 +72,6 @@ public class Note {
 		
 		this.midi += Scales.OCTAVE;
 		
-	}
-
-	
-	public int getDuration() {
-		return duration;
-	}
-	
-
-	public void setDuration(int duration) {
-		this.duration = duration;
 	}
 	
 }

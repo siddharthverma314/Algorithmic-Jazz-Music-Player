@@ -6,6 +6,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
 
+import framework.music.Chord;
+import framework.music.Duration;
+import framework.music.DurationNote;
+import framework.music.Header;
+import framework.music.Note;
+import framework.music.Scales;
+import framework.music.TimeFrameChords;
+import framework.music.TimeFrameNotes;
+import framework.music.DurationChord;
+
 public class AJAMDecoder {
 	
 	/**
@@ -38,12 +48,13 @@ public class AJAMDecoder {
 	 * All the sections are separated by "\n"
 	 * 
 	 */
-	
+
 	//chord qualities
 	public static final int CHORD_MAJOR = 'M';
 	public static final int CHORD_MINOR = 'm';
 	public static final int CHORD_DOMINANT = 'D';
 	public static final int CHORD_DIMINISHED = 'd';
+	public static final int CHORD_VELOCITY = 80;
 	//note qualities
 	public static final int NOTE_WHOLE = 'w';
 	public static final int NOTE_HALF = 'h';
@@ -58,34 +69,14 @@ public class AJAMDecoder {
 	final char SEPARATOR_NOTE = ';';
 	final char SEPARATOR_SECTION = '\n';
 	final char SEPARATOR_HEADER = ';';
-	
-	ExtendableArray<Integer> melody_note_on;
-	ExtendableArray<Integer> melody_note_off;
-	ExtendableArray<String[]> chords;
-	int BPM;
-	int[] timeSignature;
-	
+
+	TimeFrameNotes notes;
+	TimeFrameChords chords;
+	Header header;
+
 	//constructor - put stuff here if necessary later
 	public AJAMDecoder(){
 		
-		
-	}
-	
-	public int[] getTimeSignature(){
-		return timeSignature;
-	}
-	
-	public ExtendableArray<Integer> getMelodyNoteOn(){
-		return melody_note_on;
-	}
-	
-	public ExtendableArray<Integer> getMelodyNoteOff(){
-		return melody_note_off;
-	}
-	
-	public int getBPM(){
-		
-		return BPM;
 		
 	}
 	
@@ -106,6 +97,7 @@ public class AJAMDecoder {
 			parseMelody(data[2]);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new AJAMFileErrorException();
 		}
 		
@@ -142,10 +134,17 @@ public class AJAMDecoder {
 		
 	}
 	
+	public class AJAMFileErrorException extends Exception{
+
+		private static final long serialVersionUID = 5420901959461901867L;
+		
+	}
+
 	private void parseHeader(String header){
 		
 		int temp = 0; int count = 0;
-		timeSignature = new int[2];
+		int BPM = 0;
+		int[] timeSignature = new int[2];
 		for(int i = 0; i < header.length(); i++){
 			
 			char c = header.charAt(i);
@@ -177,11 +176,76 @@ public class AJAMDecoder {
 			
 		}//header parsed
 		
+		this.header = new Header();
+		this.header.setBeatsPerMinute(BPM);
+		this.header.setTimeSignature(timeSignature);
+		
 	}
 	
-	private void parseChords(String chords){
+	private void parseChords(String stringChords){
 		
+		stringChords = stringChords.replace("\n", "").replace("\r", "");
+		Scanner s = new Scanner(stringChords);
+		chords = new TimeFrameChords();
+		s.useDelimiter(Character.toString(SEPARATOR_NOTE));
 		
+		int timeframe = 0;
+		
+		while(s.hasNext()){
+			
+			String bit = s.next();
+			int type = 0;
+			int midi = 0;
+			
+			//check for rest or tie
+			if(bit.contains(Character.toString((char)NOTE_REST))){
+				type = 1;
+			} else if (bit.contains(Character.toString((char)NOTE_TIE))){
+				type = 2;
+			} else {
+				midi = Integer.parseInt(bit.substring(0, bit.length() - 2));
+			}
+			
+			//put note
+			int chord_quality = 0, length = 0;
+			int[] scale;
+			length = getLength(bit.charAt(bit.length() - 1));
+			
+			if(type == 0){
+				
+				chord_quality = (int) bit.charAt(bit.length() - 2);
+				
+				//check chord quality
+				switch(chord_quality){
+				case CHORD_MAJOR:
+					scale = Scales.MAJOR_SCALE;
+					break;
+				case CHORD_MINOR:
+					scale = Scales.NATURAL_MINOR_SCALE;
+					break;
+				case CHORD_DOMINANT:
+					scale = Scales.DOMINANT_SCALE;
+					break;
+				case CHORD_DIMINISHED:
+					scale = Scales.DOUBLE_DIMINISHED_SCALE;
+					break;
+				default:
+					scale = Scales.NATURAL_MINOR_SCALE;
+				}
+				
+				chords.addChord(new DurationChord(new Chord(scale, new Note(midi, CHORD_VELOCITY)), 
+						new Duration(timeframe, MAX_NOTE_DEPTH / length)));
+				
+				
+			} else if (type == 2){
+				
+				//TODO:Tied chord
+				
+			}
+			
+			timeframe += MAX_NOTE_DEPTH / length;
+			
+		}
 		
 	}
 	
@@ -211,8 +275,7 @@ public class AJAMDecoder {
 	private void parseMelody(String melody){
 		
 		//initialize the arrays
-		melody_note_on = new ExtendableArray<Integer>();
-		melody_note_off = new ExtendableArray<Integer>();
+		notes = new TimeFrameNotes();
 		
 		//open scanner
 		melody = melody + SEPARATOR_NOTE;
@@ -221,7 +284,7 @@ public class AJAMDecoder {
 		
 		//parse it
 		int timeframe = 0;
-		int prevMidi = 0;
+		int prevNote = 0;
 		while (s.hasNext()) {
 			String bit = s.next();
 			int midi = 0;
@@ -248,65 +311,59 @@ public class AJAMDecoder {
 
 					int length = getLength(c);
 					if(type == 0){
-						melody_note_on.set(timeframe, midi);
-						melody_note_off.set(timeframe + MAX_NOTE_DEPTH/length, midi);
+						prevNote = notes.addNote(new DurationNote(midi, timeframe, MAX_NOTE_DEPTH/length, 100));
 					}
 					else if(type == 2){
-						melody_note_off.remove(timeframe);
-						melody_note_off.set(timeframe + MAX_NOTE_DEPTH/length, prevMidi);
+						DurationNote note = notes.getNote(prevNote);
+						notes.removeNote(prevNote);
+						Duration duration = note.getDuration();
+						duration.setLength(duration.getLength() + MAX_NOTE_DEPTH/length);
+						note.setDuration(duration);
+						notes.addNote(note);
+						//melody_note_off.remove(timeframe);
+						//melody_note_off.set(timeframe + MAX_NOTE_DEPTH/length, prevMidi);
 					}
 					timeframe += MAX_NOTE_DEPTH/length;
 					
 				}
 				
-				if(type == 0)
-					prevMidi = midi;
-				
 			}
+			
 		}
 		
 		//close scanner
 		s.close();
 		
 	}
-	
-	public class AJAMFileErrorException extends Exception{
 
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 5420901959461901867L;
-		
+
+	public TimeFrameNotes getNotes() {
+		return notes;
+	}
+
+	
+	public TimeFrameChords getChords() {
+		return chords;
+	}
+
+	
+	public Header getHeader() {
+		return header;
 	}
 	
-	public static void main(String args[]){
+	public static void main(String args){
 		
-		AJAMDecoder d = new AJAMDecoder();
+		AJAMDecoder decoder = new AJAMDecoder();
 		try {
-			d.decodeAJAM(new FileInputStream("res/how_high_the_moon.ajam"));
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (AJAMFileErrorException e1) {
-			e1.printStackTrace();
-		}
-		for(int i = 0; i < d.melody_note_off.length(); i++){
-			
-			try {
-				if(d.melody_note_on.get(i) == null)
-					System.out.print("0 ");
-				else
-					System.out.print(d.melody_note_on.get(i) + " ");
-			} catch (Exception e) {
-				System.out.print("0 ");
-			}
-			
-			if(d.melody_note_off.get(i) == null)
-				System.out.print("0");
-			else
-				System.out.print(d.melody_note_off.get(i).intValue());
-			
-			System.out.println();
-			
+			decoder.decodeAJAM(new FileInputStream("res/how_high_the_moon.ajam"));
+			TimeFrameChords chords = decoder.getChords();
+			System.out.println(chords);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AJAMFileErrorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}
