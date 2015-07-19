@@ -52,7 +52,7 @@ public class AJAMDecoder {
 	public static final int CHORD_MINOR = 'm';
 	public static final int CHORD_DOMINANT = 'D';
 	public static final int CHORD_DIMINISHED = 'd';
-	public static final int CHORD_VELOCITY = 80;
+	public static final int CHORD_VELOCITY = 60;
 	//note qualities
 	public static final int NOTE_WHOLE = 'w';
 	public static final int NOTE_HALF = 'h';

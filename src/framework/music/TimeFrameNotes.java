@@ -7,14 +7,18 @@ public class TimeFrameNotes{
 
 	private List<DurationNote> durationNotes;
 	int count;
+	private int length;
 	
 	public TimeFrameNotes(){
 		durationNotes = new ArrayList<DurationNote>();
 		count = 0;
+		length = 0;
 	}
 	
 	public int addNote(DurationNote note){
 		durationNotes.add(note);
+		int end = note.getDuration().getStart() + note.getDuration().getLength();
+		length = end > length ? end : length;
 		return count++;
 	}
 	
@@ -24,6 +28,7 @@ public class TimeFrameNotes{
 	
 	public void removeNote(int index){
 		durationNotes.remove(index);
+		recalculateLength();
 	}
 	
 	public List<DurationNote> getNotesAtTime(Time time){
@@ -40,6 +45,23 @@ public class TimeFrameNotes{
 		
 		return notes;
 		
+	}
+	
+	private void recalculateLength(){
+
+		length = 0;
+		
+		for(DurationNote note : durationNotes){
+			
+			int end = note.getDuration().getStart() + note.getDuration().getLength();
+			length = end > length ? end : length;
+			
+		}
+		
+	}
+	
+	public int getLength(){
+		return length;
 	}
 
 }
