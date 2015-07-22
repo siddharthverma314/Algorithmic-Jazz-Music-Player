@@ -1,1 +1,1 @@
-Right now, all this does is play back a custom created file. Work is still in progress to complete this initial feature.
+This small program can play back a custom created music file. It's mainly meant for jazz music. Soon, I will be adding in basic improvisation features.
