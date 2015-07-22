@@ -28,6 +28,7 @@ public class TimeFrameNotes{
 	
 	public void removeNote(int index){
 		durationNotes.remove(index);
+		count--;
 		recalculateLength();
 	}
 	

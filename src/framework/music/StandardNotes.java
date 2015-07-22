@@ -81,6 +81,7 @@ public class StandardNotes {
 	public static int getMidiFromNoteName(String name, int octave){
 		
 		int shift = octave - 4;
+		shift *= 12;
 		
 		switch(name){
 		
@@ -128,7 +129,7 @@ public class StandardNotes {
 		}
 		
 	}
-
+	
 	public static int getMidiFromNoteName(String name){
 		return getMidiFromNoteName(name, 4);
 	}

@@ -10,7 +10,7 @@ import javax.sound.midi.Synthesizer;
 public class TimeFramePlayer {
 
 	Synthesizer synth;
-	private int BPM;
+	private Header header;
 	private int swing;
 	private int length;
 	
@@ -19,9 +19,9 @@ public class TimeFramePlayer {
 	List<TimeFrameChords> timeFrameChords;
 	List<TimeFrameNotes> timeFrameNotes;
 
-	public TimeFramePlayer(int BPM){
+	public TimeFramePlayer(Header header){
 		
-		this.BPM = BPM;
+		this.header = header;
 		swing = 50;
 		
 		//init synth
@@ -104,7 +104,7 @@ public class TimeFramePlayer {
 			
 			try {
 
-				long to_sleep = (long) ((6000 + swing * Math.sin(Math.PI * i / 4.0))/BPM);
+				long to_sleep = (long) ((6000 + swing * Math.sin(Math.PI * i / 4.0))/header.getBeatsPerMinute());
 				to_sleep -= System.currentTimeMillis() - prevTime;
 				Thread.sleep(to_sleep);
 				prevTime = System.currentTimeMillis();

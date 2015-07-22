@@ -9,6 +9,11 @@ public class DurationNote extends Note implements Comparable<DurationNote>{
 		duration = new Duration(start, length);
 	}
 
+	public DurationNote(int note, int start, int length) {
+		super(note);
+		duration = new Duration(start, length);
+	}
+
 	public Duration getDuration() {
 		return duration;
 	}

@@ -38,6 +38,7 @@ public class TimeFrameChords {
 	
 	public void removeChord(int index){
 		durationChords.remove(index);
+		count--;
 		recalculateLength();
 	}
 	
