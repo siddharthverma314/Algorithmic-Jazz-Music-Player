@@ -6,17 +6,17 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import framework.music.Chord;
-import framework.music.Duration;
-import framework.music.DurationChord;
-import framework.music.DurationNote;
-import framework.music.Header;
-import framework.music.Note;
-import framework.music.Scales;
-import framework.music.StandardNotes;
-import framework.music.TimeFrameChords;
-import framework.music.TimeFrameNotes;
-import framework.music.TimeFramePlayer;
+import framework.music.base.Chord;
+import framework.music.base.Duration;
+import framework.music.base.DurationChord;
+import framework.music.base.DurationNote;
+import framework.music.base.Note;
+import framework.music.base.Scales;
+import framework.music.base.StandardNotes;
+import framework.music.player.Header;
+import framework.music.player.TimeFrameChords;
+import framework.music.player.TimeFrameNotes;
+import framework.music.player.TimeFramePlayer;
 
 public class AJAMDecoder {
 	

@@ -1,4 +1,4 @@
-package framework.music;
+package framework.music.base;
 
 public class DurationChord extends Chord implements Comparable<DurationChord>{
 

@@ -1,8 +1,8 @@
 package framework.utilities;
 
-import framework.music.Header;
-import framework.music.TimeFrameChords;
-import framework.music.TimeFrameNotes;
+import framework.music.player.Header;
+import framework.music.player.TimeFrameChords;
+import framework.music.player.TimeFrameNotes;
 
 public class AJAMFile {
 
@@ -12,7 +12,7 @@ public class AJAMFile {
 	public static final int CHORD_MINOR = 'm';
 	public static final int CHORD_DOMINANT = 'D';
 	public static final int CHORD_DIMINISHED = 'd';
-	public static final int CHORD_VELOCITY = 60;
+	public static final int CHORD_VELOCITY = 55;
 	//note qualities
 	public static final int NOTE_WHOLE = 'w';
 	public static final int NOTE_HALF = 'h';

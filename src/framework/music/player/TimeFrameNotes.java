@@ -1,7 +1,10 @@
-package framework.music;
+package framework.music.player;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import framework.music.base.DurationNote;
+import framework.music.base.Time;
 
 public class TimeFrameNotes{
 

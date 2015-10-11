@@ -1,4 +1,4 @@
-package framework.music;
+package framework.music.base;
 
 public class DurationNote extends Note implements Comparable<DurationNote>{
 

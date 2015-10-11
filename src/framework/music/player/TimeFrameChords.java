@@ -1,7 +1,10 @@
-package framework.music;
+package framework.music.player;
 
 import java.util.List;
 import java.util.ArrayList;
+
+import framework.music.base.DurationChord;
+import framework.music.base.Time;
 
 public class TimeFrameChords {
 
@@ -26,7 +29,7 @@ public class TimeFrameChords {
 		List<DurationChord> chords = new ArrayList<DurationChord>();
 		for(DurationChord chord : durationChords){
 			if(chord.getDuration().getStart() <= time.getTime() && 
-					chord.getDuration().getStart() + chord.getDuration().getLength() >= time.getTime())
+					chord.getDuration().getStart() + chord.getDuration().getLength() > time.getTime())
 				chords.add(chord);
 		}
 		return chords;

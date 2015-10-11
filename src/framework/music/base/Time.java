@@ -1,14 +1,14 @@
-package framework.music;
+package framework.music.base;
 
 public class Time {
 
 	private int time;
 	
-	Time(){		
+	public Time(){		
 		time = 0;
 	}
 	
-	Time(int start){
+	public Time(int start){
 		time = start;
 	}
 	
